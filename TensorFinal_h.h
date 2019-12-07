@@ -1,7 +1,6 @@
+#ifndef TENSORFINAL_H_H_INCLUDED
+#define TENSORFINAL_H_H_INCLUDED
 
-
-#ifndef TENSOR_H_H_INCLUDED
-#define TENSOR_H_H_INCLUDED
 
 #include <iostream>
 #include <vector>
@@ -27,7 +26,6 @@ public:
     void reshape(int x, int y, int z);
     Tensor operator+(Tensor a);
     Tensor operator-(Tensor a);
-private:
     int* tensorAArray;
     int** tensorBArray;
     int*** tensorCArray;
@@ -43,6 +41,7 @@ Tensor::Tensor(int x){
             tensorAArray[i] = 0;
         }
     }
+//перевизначенн конструктору для 2-виірного масиву
 Tensor::Tensor(int x, int y){
         x_t = x;
         y_t = y;
@@ -54,6 +53,7 @@ Tensor::Tensor(int x, int y){
             }
         }
     }
+//перевизначенн конструктору для 3-виірного масиву
 Tensor::Tensor(int x, int y, int z){
         x_t = x;
         y_t = y;
@@ -96,40 +96,29 @@ Tensor Tensor:: cut(vector<int> cutShape){
                 newT.tensorAArray[i] = (this->tensorAArray[j]);
             }
         }
+        return newT;
     }
+//переванттаження операцій вирізки для різних розмірностей
 Tensor Tensor:: cut(vector<int> rows, vector<int> columns){
         Tensor newT(rows[1]-rows[0]+1, columns[1]-columns[0]+1);
-        //int tempArray[rows.size()*columns.size()];
-        vector<int> tempArray;
-        for(int i = rows[0]; i<rows[1]; i++){
-            for(int j = columns[0]; j<columns[1]; j++){
-                tempArray.push_back(this->tensorBArray[i][j]);
-            }
-        }
-        for(int i = 1; i <= (rows[1]-rows[0]); i++){
-            for(int j = 1; j <= (columns[1]-columns[0]); j++){
-                newT.tensorBArray[i][j] = tempArray[i*j];
-            }
-        }
 
+        for(int i = 0; i<=rows[1]-rows[0]; i++){
+            for(int j = 0; j<=columns[1]-columns[0]; j++){
+                newT.tensorBArray[i][j] = this->tensorBArray[i+rows[0]][j+columns[0]];
+            }
+        }
+        return newT;
     }
 Tensor Tensor:: cut(vector<int> x, vector<int> y, vector<int> z){
-        Tensor newT(x[1]-x[0], y[1]-y[0], z[1]-z[0]);
-        vector<int> tempArray;
-        for(int i = x[0]; i<x[1]; i++){
-            for(int j = y[0]; j<y[1]; j++){
-                for(int k = z[0]; k<z[1]; k++){
-                    tempArray.push_back(this->tensorCArray[i][j][k]);
+        Tensor newT(x[1]-x[0]+1, y[1]-y[0]+1, z[1]-z[0]+1);
+        for(int i = 0; i<=x[1]-x[0]; i++){
+            for(int j = 0; j<= y[1]-y[0]; j++){
+                for(int k = 0; k<=z[1]-z[0]; k++){
+                    newT.tensorCArray[i][j][k] = this->tensorCArray[i+x[0]][j+y[0]][k+z[0]];
                 }
             }
         }
-        for(int i = 1; i <= (x[1]-x[0]); i++){
-            for(int j = 1; j <= (y[1]-y[0]); j++){
-                for(int k = 1; k <= (z[1]-z[0]); k++){
-                    newT.tensorCArray[i][j][k] = tempArray[i*j*k];
-                }
-            }
-        }
+        return newT;
     }
 void Tensor:: reshape(int x, int y){
         vector<int> tempArray;
@@ -159,7 +148,7 @@ void Tensor::reshape(int x, int y, int z){
             }
             delete* tensorCArray[i];
         }
-        delete* tensorBArray;
+        delete* tensorCArray;
         tensorCArray = new int**[x];
         for(int i = 1; i <= x; i++){
             tensorCArray[i] = new int*[y];
@@ -171,6 +160,7 @@ void Tensor::reshape(int x, int y, int z){
             }
         }
     }
+//перевизначення оператору додавання для поелементного додавання 2 тензорів
 Tensor Tensor::operator+(Tensor a){
         if(a.y_t == NULL){
             Tensor newTensor(a.x_t);
@@ -198,6 +188,7 @@ Tensor Tensor::operator+(Tensor a){
             return newTensor;
         }
     }
+//перевизначення оператору віднімання для поелементного віднімання 2 тензорів
 Tensor Tensor::operator-(Tensor a){
         if(a.y_t == NULL){
             Tensor newTensor(a.x_t);
@@ -227,4 +218,4 @@ Tensor Tensor::operator-(Tensor a){
     }
 
 
-#endif // TENSOR_H_H_INCLUDED
+#endif // TENSORFINAL_H_H_INCLUDED
